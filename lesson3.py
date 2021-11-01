@@ -9,7 +9,7 @@ print(initial_string)
 
 print(len(initial_string))
 
-if initial_string.find('строка'):
+if initial_string.find('строка') != -1:
     print('Да')
 else:
     print('Нет')
