@@ -1,38 +1,38 @@
-def password_length(func):
-    def wrapper(*args, **kwargs):
-        print('before')
-        password = kwargs.get('password')
-        if not password or len(password) < 8:
-            return False
-        result = func(*args, **kwargs)
-        if not result:
-            ...
-        print('after')
-        return result
-
-    return wrapper
-
-
-PASSWORD = {}
-
-
-@password_length
-def save_password(password: str = None, first_name: str = None) -> bool:
-    """
-    Password > 8 and contains > 1 digit and > 1 Upper case
-    @param password:
-    @param first_name:
-    @return:
-    """
-    if PASSWORD.get(first_name):
-        return False
-    PASSWORD.update({first_name: {'password': password}})
-    return True
-
-
-if __name__ == "__main__":
-    if save_password(password='1234567890', first_name="Alex"):
-        print(PASSWORD)
+# def password_length(func):
+#     def wrapper(*args, **kwargs):
+#         print('before')
+#         password = kwargs.get('password')
+#         if not password or len(password) < 8:
+#             return False
+#         result = func(*args, **kwargs)
+#         if not result:
+#             ...
+#         print('after')
+#         return result
+#
+#     return wrapper
+#
+#
+# PASSWORD = {}
+#
+#
+# @password_length
+# def save_password(password: str = None, first_name: str = None) -> bool:
+#     """
+#     Password > 8 and contains > 1 digit and > 1 Upper case
+#     @param password:
+#     @param first_name:
+#     @return:
+#     """
+#     if PASSWORD.get(first_name):
+#         return False
+#     PASSWORD.update({first_name: {'password': password}})
+#     return True
+#
+#
+# if __name__ == "__main__":
+#     if save_password(password='1234567890', first_name="Alex"):
+#         print(PASSWORD)
 
 """
 Аннотации функций являются полностью необязательной информацией метаданных о типах, 
@@ -115,11 +115,83 @@ for num in next_cube():
 а не начинает с самого начала, общее время выполнения сокращается.
 """
 
+# def f(a: str, b: (list, tuple), c=None) -> None:
+#     print(f.__annotations__, type(f.__annotations__))
+#     return
+#
+#
+# if __name__ == "__main__":
+#     f('text', [])
+from functools import wraps
 
-def f(a: str, b: (list, tuple), c=None) -> None:
-    print(f.__annotations__, type(f.__annotations__))
-    return
+"""
+Написать мини программу, которая будет проверять пароль пользователя и если пароль подходит будет авторизировать пользователя:
+
+Программа должна хранить Имена и Пароли в глобальном словаре
+Должна содержать три функции:
+check_password() возвращающая -> bool
+authenticate() -> bool
+login() принимающая минимум 2 аргумента username, password возвращающая -> bool
+функция login() должна быть с декоратором в котором будет вся логика проверки check_password и authenticate
+у пользователя должно быть 3 попытки после чего программа завершается и выводит сообщение "Попытки истекли!", 
+при каждой не удачной попытки должно быть сообщение "У вас осталось Н попыток"
+Сценарий: пользователь с консоли вводит Имя и Пароль, программа возвращает текст "Вы в системе!" или "Не правильное Имя или Пароль"
+"""
+
+USERS = {
+    'Alex': '12345',
+    'Bob': '54321',
+    'John': 'Smith'
+}
+
+
+def login_decorator(func):
+    @wraps(func)
+    def wrapper(username, password):
+        if not check_password(username, password):
+            print('Не правильное Имя или Пароль')
+            return False
+        if not authenticate():
+            return False
+        return func(username, password)
+
+    return wrapper
+
+
+def check_password(username: str, password: str) -> bool:
+    """
+    Return True if Username exists in USERS dict and password is correct
+    @param username: Username from USERS dict
+    @param password: Password from USERS dict
+    @return: bool
+    """
+    return USERS.get(username, None) == password
+
+
+def authenticate() -> bool:
+    """
+    Function without any arguments, just for example
+    @return: bool
+    """
+    print('Вы в системе!')
+    return True
+
+
+@login_decorator
+def login(_username: str, _password: str) -> bool:
+    """
+    Just abstract function for example, always return True
+    @param _username: Username from USERS dict
+    @param _password: Password from USERS dict
+    @return: bool
+    """
+    return True
 
 
 if __name__ == "__main__":
-    f('text', [])
+    i = 3
+    while i > 0:
+        if login(input('Введите ваш логин:'), input('Введите ваш пароль:')):
+            break
+        i -= 1
+        print(f'Оталось попыток: {i}' if i else 'Попытки истекли!')
