@@ -19,20 +19,37 @@ username and password получать из командной строки ка
 Если не правильное имя или пароль даем 3 попытки как и раньше.
 Если передать только имя, то спрашивать только пароль, и наоборот, спрашивать пароль если передать только имя.
 Основная идея в том что-бы расширить функционал прошлой программы, а не переписывать!
+
+lesson10
+Расширить функционал прошлого ДЗ:
+После всех неудачных попыток войти в систему нужно блокировать пользователя на 5 минут.
+Выводить сообщение "Вы заблокированы! Следующая попытка через N мин."
+для решение понадобится хранить две даты-временя
+последняя удачная попытка входа
+последняя НЕ удачная попытка входа
+действия с датой лучше вынести в отдельные функци
 """
 import argparse
 from functools import wraps
+from datetime import datetime, timedelta
 
 USERS = {
-    'Alex': '12345',
-    'Bob': '54321',
-    'John': 'Smith'
+    'Alex': {'password': '12345',
+             'last_login': {'success': None,
+                            'fail': datetime.now() - timedelta(minutes=3)}
+             },
 }
 
 
 def login_decorator(func):
     @wraps(func)
     def wrapper(username, password):
+        if not get_user(username):
+            return False
+        if not can_login_from_last_fail(username):
+            print(f'Вы заблокированы! '
+                  f'Следующая попытка через {get_remaining_time(username)} мин')
+            exit()
         if not check_password(username, password):
             print('Не правильное Имя или Пароль')
             return False
@@ -50,7 +67,37 @@ def check_password(username: str, password: str) -> bool:
     @param password: Password from USERS dict
     @return: bool
     """
-    return all((username, password)) and USERS.get(username, None) == password
+    if not all((username, password)) or not get_user(username):
+        return False
+    return USERS[username]['password'] == password
+
+
+def can_login_from_last_fail(username: str) -> bool:
+    if not get_user(username):
+        return False
+    last_fail = USERS[username]['last_login']['fail']
+    return last_fail < datetime.now() - timedelta(minutes=5)
+
+
+def get_remaining_time(username) -> int:
+    """
+    @return: minutes as integer
+    """
+    last_fail = USERS[username]['last_login']['fail']
+    now = datetime.now()
+    if last_fail.minute < now.minute:
+        remaining = now.minute - last_fail.minute
+    else:
+        remaining = now.minute - (60 - last_fail.minute)
+    return remaining
+
+
+def get_user(username: str) -> str or None:
+    """
+    @param username: str
+    @return: username or None if does not exist
+    """
+    return USERS.get(username, None)
 
 
 def authenticate() -> bool:
