@@ -30,8 +30,8 @@ lesson10
 действия с датой лучше вынести в отдельные функци
 """
 import argparse
-from functools import wraps
 from datetime import datetime, timedelta
+from functools import wraps
 
 USERS = {
     'Alex': {'password': '12345',
@@ -39,6 +39,10 @@ USERS = {
                             'fail': datetime.now() - timedelta(minutes=3)}
              },
 }
+
+
+class UserDoesNotExist(Exception):
+    ...
 
 
 def login_decorator(func):
@@ -67,7 +71,10 @@ def check_password(username: str, password: str) -> bool:
     @param password: Password from USERS dict
     @return: bool
     """
-    if not all((username, password)) or not get_user(username):
+    try:
+        assert all((username, password))
+        get_user(username)
+    except (UserDoesNotExist, AssertionError):
         return False
     return USERS[username]['password'] == password
 
@@ -92,12 +99,15 @@ def get_remaining_time(username) -> int:
     return remaining
 
 
-def get_user(username: str) -> str or None:
+def get_user(username: str) -> str or UserDoesNotExist:
     """
     @param username: str
     @return: username or None if does not exist
     """
-    return USERS.get(username, None)
+    user = USERS.get(username, None)
+    if not user:
+        raise UserDoesNotExist('User does not exist')
+    return user
 
 
 def authenticate() -> bool:
