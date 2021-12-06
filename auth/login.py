@@ -28,17 +28,24 @@ lesson10
 последняя удачная попытка входа
 последняя НЕ удачная попытка входа
 действия с датой лучше вынести в отдельные функци
+
+lesson12
+Написать собственный клас Исключения - UserDoesNotExist
+Переписать функцию проверки пароля использую собственное исключения
+
+lesson13
+Перенести функционал программы login с глобальной переменной в файл.
+Данные хранить в формате JSON
+Добавить функцию registration() (по желанию)
 """
 import argparse
+import json
 from datetime import datetime, timedelta
 from functools import wraps
+from json import JSONDecodeError
 
-USERS = {
-    'Alex': {'password': '12345',
-             'last_login': {'success': None,
-                            'fail': datetime.now() - timedelta(minutes=3)}
-             },
-}
+DATA_FORMAT = '%Y-%m-%d %H:%M'
+USER = {}
 
 
 class UserDoesNotExist(Exception):
@@ -49,7 +56,8 @@ def login_decorator(func):
     @wraps(func)
     def wrapper(username, password):
         if not get_user(username):
-            return False
+            print('Пользователь не найден, пожалуйста зарегистрируйтесь!')
+            exit()
         if not can_login_from_last_fail(username):
             print(f'Вы заблокированы! '
                   f'Следующая попытка через {get_remaining_time(username)} мин')
@@ -57,7 +65,7 @@ def login_decorator(func):
         if not check_password(username, password):
             print('Не правильное Имя или Пароль')
             return False
-        if not authenticate():
+        if not authenticate(username):
             return False
         return func(username, password)
 
@@ -66,23 +74,25 @@ def login_decorator(func):
 
 def check_password(username: str, password: str) -> bool:
     """
-    Return True if Username exists in USERS dict and password is correct
-    @param username: Username from USERS dict
-    @param password: Password from USERS dict
+    Return True if Username exists in USER dict and password is correct
+    @param username: Username from USER dict
+    @param password: Password from USER dict
     @return: bool
     """
-    try:
-        assert all((username, password))
-        get_user(username)
-    except (UserDoesNotExist, AssertionError):
-        return False
-    return USERS[username]['password'] == password
+
+    user_data = get_user(username)
+    return all((username, password)) and user_data and user_data[
+        'password'] == password
 
 
 def can_login_from_last_fail(username: str) -> bool:
-    if not get_user(username):
+    user_data = get_user(username)
+    if not user_data:
         return False
-    last_fail = USERS[username]['last_login']['fail']
+    last_fail = user_data['last_login']['fail']
+    if not last_fail:
+        return True
+    last_fail = datetime.strptime(last_fail, DATA_FORMAT)
     return last_fail < datetime.now() - timedelta(minutes=5)
 
 
@@ -90,7 +100,10 @@ def get_remaining_time(username) -> int:
     """
     @return: minutes as integer
     """
-    last_fail = USERS[username]['last_login']['fail']
+    user_data = get_user(username)
+    if not user_data:
+        return False
+    last_fail = datetime.strptime(user_data['last_login']['fail'], DATA_FORMAT)
     now = datetime.now()
     if last_fail.minute < now.minute:
         remaining = now.minute - last_fail.minute
@@ -99,22 +112,37 @@ def get_remaining_time(username) -> int:
     return remaining
 
 
-def get_user(username: str) -> str or UserDoesNotExist:
+def get_user(username: str) -> str or None:
     """
     @param username: str
     @return: username or None if does not exist
     """
-    user = USERS.get(username, None)
-    if not user:
-        raise UserDoesNotExist('User does not exist')
-    return user
+    global USER
+    if not USER:
+        try:
+            user = load_data(username).get(username, None)
+            if not user:
+                raise UserDoesNotExist()
+            USER = user
+        except UserDoesNotExist:
+            return
+    return USER
 
 
-def authenticate() -> bool:
+def authenticate(username: str) -> bool:
     """
     Function without any arguments, just for example
     @return: bool
     """
+    user_data = get_user(username)
+    if user_data:
+        user_data['last_login']['success'] = datetime.now().strftime(
+            DATA_FORMAT)
+        user_data['last_login']['fail'] = None
+        data = {
+            username: user_data
+        }
+        save_data(username, data)
     print('Вы в системе!')
     return True
 
@@ -123,32 +151,89 @@ def authenticate() -> bool:
 def login(_username: str, _password: str) -> bool:
     """
     Just abstract function for example, always return True
-    @param _username: Username from USERS dict
-    @param _password: Password from USERS dict
+    @param _username: Username from USER dict
+    @param _password: Password from USER dict
     @return: bool
     """
     return True
+
+
+def registration(username: str, password: str) -> bool:
+    user_data = get_user(username)
+    if not user_data and username and password:
+        print('Зарегистрироваться!')
+        data = {
+            username: {'password': password,
+                       'last_login': {'success': None,
+                                      'fail': None}
+                       },
+        }
+        save_data(username, data)
+        print('Вы успешно зарегистрировались!')
+        return True
+    print('Имя и пароль обязательны!')
+    return False
+
+
+def save_data(filename: str, data: dict):
+    try:
+        with open(f'users/{filename.lower()}.json', 'w') as f:
+            f.write(json.dumps(data, ensure_ascii=False))
+    except Exception as err:
+        print('ERROR: ', err)
+        exit()
+
+
+def load_data(filename: str) -> dict:
+    if filename:
+        try:
+            with open(f'users/{filename.lower()}.json', 'r') as f:
+                return json.loads(f.read())
+        except (FileNotFoundError, JSONDecodeError):
+            pass
+    return {}
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--username", action="store", help="Username")
     parser.add_argument("-p", "--password", action="store", help='Password')
+    parser.add_argument("-r", "--registration", action="store_true",
+                        help='Add new user')
     args = parser.parse_args()
-    return args.username, args.password
+    return args.username, args.password, args.registration
+
+
+def save_fail_attempt(username: str):
+    user_data = get_user(username)
+    if user_data:
+        user_data['last_login']['fail'] = datetime.now().strftime(DATA_FORMAT)
+        data = {
+            username: user_data
+        }
+        save_data(username, data)
+
+
+def main():
+    username, password, is_registration = parse_args()
+    if is_registration:
+        registration(username or input('Введите ваш логин:'),
+                     password or input('Введите ваш пароль:'))
+        exit()
+    if username or password:
+        if login(username or input('Введите ваш логин:'),
+                 password or input('Введите ваш пароль:')):
+            exit()
+    i = 3
+    while i > 0:
+        username = input('Введите ваш логин:')
+        password = input('Введите ваш пароль:')
+        if login(username, password):
+            exit()
+        i -= 1
+        print(f'Оталось попыток: {i}' if i else 'Попытки истекли!')
+    save_fail_attempt(username)
 
 
 if __name__ == "__main__":
-    username, password = parse_args()
-    if username and password:
-        if login(username, password):
-            exit()
-        else:
-            username, password = None, None
-    i = 3
-    while i > 0:
-        if login(username or input('Введите ваш логин:'),
-                 password or input('Введите ваш пароль:')):
-            break
-        i -= 1
-        print(f'Оталось попыток: {i}' if i else 'Попытки истекли!')
+    main()
