@@ -27,6 +27,8 @@ w - write
 a - append
 b - binary
 + - write
+
+https://docs.python.org/3/library/contextlib.html#contextlib.asynccontextmanager
 """
 import json
 
