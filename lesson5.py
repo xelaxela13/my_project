@@ -138,6 +138,17 @@ n = (1,2,3)
 a,b,c = n
 print(a,b,c)
 ******************************************************************************
+filter
+
+filter(function, iterable)
+
+a = [11, False, 18, 21, "", 12, 34, 0, [], {}]
+filtered_a = filter(None, a)
+list(filtered_a)
+
+creature_names = ['Sammy', 'Ashley', 'Jo', 'Olly', 'Jackie', 'Charlie']
+list(filter(lambda x: x[0].lower() in 'aeiou', creature_names))
+******************************************************************************
 """
 
 """
