@@ -149,6 +149,8 @@ list(filtered_a)
 creature_names = ['Sammy', 'Ashley', 'Jo', 'Olly', 'Jackie', 'Charlie']
 list(filter(lambda x: x[0].lower() in 'aeiou', creature_names))
 ******************************************************************************
+https://codecamp.ru/blog/python-list-comprehensions/
+******************************************************************************
 """
 
 """
