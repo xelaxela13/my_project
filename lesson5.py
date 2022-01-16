@@ -218,3 +218,10 @@ for i, h in enumerate(heights):
         break
 
 print(heights)
+
+# Петя перешёл в другую школу.
+a = [random.randint(120, 200) for _ in range(10)]
+x = int(input())
+a.append(x)
+a.sort(reverse=True)
+print(a.index(x) + a.count(x))
