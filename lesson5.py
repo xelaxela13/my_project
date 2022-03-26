@@ -65,6 +65,8 @@ for x, *y in s:
     print(x, type(x))
     print(y, type(y))
 [y for x, *y in s]
+
+[i for *i, j, d, g, h in s]
 ******************************************************************************
 
 ''.join()
