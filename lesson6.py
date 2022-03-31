@@ -229,3 +229,9 @@ for k, v in dict_3.items():
     dict_3[k] = v
 
 print(dict_3)
+
+
+from collections import Counter
+from functools import reduce
+
+print(dict(reduce(lambda a, b: Counter(a) | Counter(b), (dict_1, dict_2))))
