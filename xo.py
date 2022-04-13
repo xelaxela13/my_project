@@ -35,6 +35,13 @@ def checkio(game_result: list[str]) -> str:
     v, vr = vertical(game_result)
     return h and hr or dl and dlr or dr and drr or v and vr or vr
 
+# def checkio(rows: list[str]) -> str:
+#     cols = map(''.join, zip(*rows))
+#     diags = map(''.join, zip(*[(r[i], r[2 - i]) for i, r in enumerate(rows)]))
+#     lines = rows + list(cols) + list(diags)
+#
+#     return 'X' if ('XXX' in lines) else 'O' if ('OOO' in lines) else 'D'
+
 
 if __name__ == '__main__':
     assert checkio([
