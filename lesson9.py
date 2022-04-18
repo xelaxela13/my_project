@@ -54,15 +54,13 @@
 
 from random import randint
 
-N = 10
-a = []
-for i in range(N):
-    a.append(randint(1, 99))
+n = 10
+a = [randint(1, 99) for i in range(100)]
 print(a)
 
 
-for i in range(N-1):
-    for j in range(N-i-1):
+for i in range(n-1):
+    for j in range(n-i-1):
         if a[j] > a[j+1]:
             a[j], a[j+1] = a[j+1], a[j]
 
@@ -71,16 +69,14 @@ print(a)
 
 from random import randint
 
-N = 10
-a = []
-for i in range(N):
-    a.append(randint(1, 99))
+n = 10
+a = [randint(1, 99) for i in range(n)]
 print(a)
 
 i = 0
-while i < N - 1:
+while i < n - 1:
     j = 0
-    while j < N - 1 - i:
+    while j < n - 1 - i:
         if a[j] > a[j+1]:
             a[j], a[j+1] = a[j+1], a[j]
         j += 1
@@ -91,17 +87,15 @@ print(a)
 from random import randint
 
 def bubble(array):
-    for i in range(N-1):
-        for j in range(N-i-1):
+    for i in range(n-1):
+        for j in range(n-i-1):
             if array[j] > array[j+1]:
                 buff = array[j]
                 array[j] = array[j+1]
                 array[j+1] = buff
 
-N = 10
-a = []
-for i in range(N):
-    a.append(randint(1, 99))
+n = 10
+a = [randint(1, 99) for i in range(n)]
 
 print(a)
 bubble(a)
@@ -111,8 +105,10 @@ print(a)
 """
 Сортировка выбором
 
-Алгоритм сортировки выбором заключается в поиске на необработанном срезе массива или списка минимального значения 
-и в дальнейшем обмене этого значения с первым элементом необработанного среза. На следующем шаге необработанный срез уменьшается на один элемент.
+Алгоритм сортировки выбором заключается в поиске на необработанном срезе массива 
+или списка минимального значения 
+и в дальнейшем обмене этого значения с первым элементом необработанного среза. 
+На следующем шаге необработанный срез уменьшается на один элемент.
 
 Найти наименьшее значение в списке.
 Записать его в начало списка, а первый элемент - на место, где раньше стоял наименьший.
@@ -124,56 +120,54 @@ print(a)
 # случайными числами от 1 до 99 и
 # выводим неотсортированный список на экран.
 from random import randint
-N = 10
-arr = []
-for i in range(N):
-    arr.append(randint(1, 99))
+n = 10
+arr = [randint(1, 99) for i in range(n)]
 print(arr)
  
  
-# В цикле переменная i хранит индекс ячейки,
-# в которую записывается минимальный элемент.
-# Сначала это будет первая ячейка.
-i = 0
- 
-# N - 1, так как последний элемент
-# обменивать уже не надо.
-while i < N - 1:
- 
-    # ПОИСК МИНИМУМА
-    # Сначала надо найти минимальное значение
-    # на срезе от i до конца списка.
-    # Переменная m будет хранить индекс ячейки
-    # с минимальным значением.
-    # Сначала предполагаем, что
-    # в ячейке i содержится минимальный элемент.
-    m = i
-    # Поиск начинаем с ячейки следующей за i.
-    j = i + 1
-    # Пока не дойдем конца списка,
-    while j < N:
-        # будем сравнивать значение ячейки j,
-        # со значением ячейки m.
-        if arr[j] < arr[m]:
-            # Если в j значение меньше, чем в m,
-            # сохраним в m номер найденного
-            # на данный момент минимума.
-            m = j
-        # Перейдем к следующей ячейке.
-        j += 1
- 
-    # ОБМЕН ЗНАЧЕНИЙ
-    # В ячейку i записывается найденный минимум,
-    # а значение из ячейки i переносится
-    # на старое место минимума.
-    arr[i], arr[m] = arr[m], arr[i]
- 
-    # ПЕРЕХОД К СЛЕДУЮЩЕЙ НЕОБРАБОТАННОЙ ЯЧЕЙКЕ
-    i += 1
- 
- 
-# Вывод отсортированного списка
-print(arr)
+def choose_sort(arr, n):
+    print(arr)
+
+    # В цикле переменная i хранит индекс ячейки,
+    # в которую записывается минимальный элемент.
+    # Сначала это будет первая ячейка.
+    i = 0
+
+    # n - 1, так как последний элемент
+    # обменивать уже не надо.
+    while i < n - 1:
+
+        # ПОИСК МИНИМУМА
+        # Сначала надо найти минимальное значение
+        # на срезе от i до конца списка.
+        # Переменная m будет хранить индекс ячейки
+        # с минимальным значением.
+        # Сначала предполагаем, что
+        # в ячейке i содержится минимальный элемент.
+        m = i
+        # Поиск начинаем с ячейки следующей за i.
+        j = i + 1
+        # Пока не дойдем конца списка,
+        while j < n:
+            # будем сравнивать значение ячейки j,
+            # со значением ячейки m.
+            if arr[j] < arr[m]:
+                # Если в j значение меньше, чем в m,
+                # сохраним в m номер найденного
+                # на данный момент минимума.
+                m = j
+            # Перейдем к следующей ячейке.
+            j += 1
+
+        # ОБМЕН ЗНАЧЕНИЙ
+        # В ячейку i записывается найденный минимум,
+        # а значение из ячейки i переносится
+        # на старое место минимума.
+        arr[i], arr[m] = arr[m], arr[i]
+
+        # ПЕРЕХОД К СЛЕДУЮЩЕЙ НЕОБРАБОТАННОЙ ЯЧЕЙКЕ
+        i += 1
+    return arr
 """
 
 """
@@ -210,6 +204,41 @@ def insertion(data):
             j -= 1
         data[j + 1] = key
     return data
+    
+    
+argparse - это модуль для обработки аргументов командной строки. Примеры того, что позволяет делать модуль:
+
+создавать аргументы и опции, с которыми может вызываться скрипт
+указывать типы аргументов, значения по умолчанию
+указывать, какие действия соответствуют аргументам
+выполнять вызов функции при указании аргумента
+отображать сообщения с подсказками по использованию скрипта
+
+import subprocess
+import argparse
+
+
+def ping_ip(ip_address, count):
+    reply = subprocess.run(
+        f"ping -c {count} -n {ip_address}",
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        encoding="utf-8",
+    )
+    if reply.returncode == 0:
+        return True, reply.stdout
+    else:
+        return False, reply.stdout + reply.stderr
+
+
+parser = argparse.ArgumentParser(description="Ping script")
+
+parser.add_argument("-a", dest="ip", required=True)
+parser.add_argument("-c", dest="count", default=2, type=int)
+
+args = parser.parse_args()
+add_parser.set_defaults(func=ping_ip)
 """
 
 
@@ -221,7 +250,7 @@ def insertion(data):
 #                         help="display a square of a given number")
 #     parser.add_argument("-v", "--verbose", action="store_true",
 #                         help="increase output verbosity")
-#     parser.add_argument("-n", action="store", help='Variable N')
+#     parser.add_argument("-n", action="store", help='Variable n')
 #     parser.add_argument("-l", action="append", help='List')
 #     parser.add_argument("--const", action="store_const", const=5, help='List')
 #     return parser.parse_args()
