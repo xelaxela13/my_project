@@ -1,4 +1,75 @@
 """
+
+Переменные экземпляра класса предназначены для данных, уникальных для каждого
+экземпляра класса, а переменные класса (атрибуты данных класса) -
+для атрибутов и методов, общих для всех экземпляров класса.
+
+Python вызывает специальный метод __init__(), который называют конструктором класса,
+ каждый раз при создании нового экземпляра класса.
+Вместо использования привычной точечной нотации для доступа к атрибутам можно
+использовать встроенные функции:
+
+getattr(obj, name [, default]) - для доступа к атрибуту name объекта класса obj.
+hasattr(obj, name) - проверить, есть ли в классе obj атрибут name.
+setattr(obj, name, value) - задать атрибут name со значением value.
+Если атрибут не существует, он будет создан.
+delattr(obj, name) - удалить атрибут name из объекта класса obj.
+Где хранятся атрибуты класса и экземпляра класса?
+
+Python не был бы Python без четко определенного и настраиваемого поведения атрибутов.
+Атрибуты в Python хранятся в магическом методе с именем __dict__.
+Получить доступ к нему можно следующим образом:
+
+class A:
+    public = 'public class A'
+    _protected = 'protected class A'
+    __private = 'private class A'
+
+    def get_self_variables(self):
+        return self.public, self._protected
+
+    def get_self_private_variables(self):
+        try:
+            return self.__private
+        except AttributeError as err:
+            return err
+
+
+class B(A):
+    def get_parent_variables(self):
+        return self.public, self._protected
+
+    def get_parent_private_variables(self):
+        try:
+            return self.__private
+        except AttributeError as err:
+            return err
+
+
+if __name__ == '__main__':
+    a = A()
+    b = B()
+    print(a.get_self_variables(), a.get_self_private_variables())
+    print(b.get_parent_variables(), b.get_parent_private_variables())
+
+
+class T1:
+    def __init__(self):
+        self.n = 10
+
+    def total(self, a):
+        return self.n + int(a)
+
+
+class T2(T1):
+    def __init__(self):
+        super().__init__()
+        self.string = 'Hi'
+
+    def total(self, a):
+        return len(self.string + str(a))
+
+
 super().method(*args, **kwargs)
 
 raise NotImplementedError
@@ -73,7 +144,7 @@ class Singleton(metaclass=SingletonMeta):
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.__instance, cls):
-            cls.__instance = super().__new__(cls, *args, **kwargs)
+            cls.__instance = super().__new__(cls)
         return cls.__instance
 
 

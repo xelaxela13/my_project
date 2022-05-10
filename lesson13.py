@@ -18,13 +18,21 @@ def main():
     save_image_to_file(image_data)
 
 
+import os
+if os.path.exists("demofile.txt"):
+  os.remove("demofile.txt")
+else:
+  print("The file does not exist")
+
+
 if __name__ == '__main__':
     main()
 
 
 r - read
-w - write
-a - append
+w - Write - will create a file if the specified file does not exist
+x - Create - will create a file, returns an error if the file exist
+a - Append - will create a file if the specified file does not exist
 b - binary
 + - write
 
