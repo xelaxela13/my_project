@@ -1,2 +1,2 @@
-# all builtins functions
+# all builtins ctions
 print(dir(__builtins__))
