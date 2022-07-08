@@ -62,7 +62,10 @@ Duck typing
  List[int]
  Dict[str, int]
 
-Yield — это ключевое слово в Python, которое используется для возврата из функции с сохранением состояния ее локальных переменных,
+pip install mypy
+
+Yield — это ключевое слово в Python, которое используется для возврата из функции
+с сохранением состояния ее локальных переменных,
 и при повторном вызове такой функции выполнение продолжается с оператора yield,
 на котором ее работа была прервана. Любая функция, содержащая ключевое слово yield,
 называется генератором. Можно сказать, yield — это то, что делает ее генератором.
@@ -124,7 +127,28 @@ for num in next_cube():
 #
 # if __name__ == "__main__":
 #     f('text', [])
+
 from functools import wraps
+
+
+def tag_decorator(tag):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(text):
+            return f'<{tag}>{func(text)}</{tag}>'
+
+        return wrapper
+
+    return decorator
+
+
+@tag_decorator(tag='div')
+def f(text: str) -> str:
+    return text.upper()
+
+
+if __name__ == '__main__':
+    print(f('text'))
 
 """
 Написать мини программу, которая будет проверять пароль пользователя и если пароль подходит будет авторизировать пользователя:

@@ -168,6 +168,10 @@ x.popitem()
 https://pythonworld.ru/moduli/modul-itertools.html
 https://pythonworld.ru/moduli/modul-collections.html
 **************************************************************************
+
+min
+max
+sum
 """
 
 text = 'В единственной строке записан текст Для каждого слова из данного текста подсчитайте сколько раз оно встречалось в этом тексте'

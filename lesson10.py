@@ -48,6 +48,23 @@ def unpack_list(_list, tmp=None):
 
 flat_list=lambda d: isinstance(d, int) and [d] or sum(map(flat_list,d),[])
 
+def find_nested_value(key, data):
+    if key in data:
+        return data[key]
+    for k, v in data.items():
+        if isinstance(v, dict):
+            res = find_nested_value(key, v)
+            if res is not None:
+                return res
+
+
+def nested_lists_len(_list: list, common_len=0):
+    common_len += len(_list)
+    for nested_list in _list:
+        if isinstance(nested_list, list):
+            common_len = nested_lists_len(nested_list, common_len)
+    return common_len
+
 
 import sys
 sys.getrecursionlimit()

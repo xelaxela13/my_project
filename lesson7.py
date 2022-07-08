@@ -59,6 +59,18 @@ high_ord_func(2, lambda x: x + 3)
 Приведенный выше пример возвращает строку «odd», если лямбда-аргумент нечетный, 
 и «even», когда аргумент четный. Он распространяется на две строки, 
 поскольку содержится в скобках, но остается одним выражением.
+
+def myfunc(n):
+  return lambda a : a * n
+
+mydoubler = myfunc(2)
+
+print(mydoubler(11))
+
+
+tables = [lambda x=x: x*10 for x in range(1, 11)]
+
+Max = lambda a, b : a if(a > b) else b
 """
 
 
