@@ -1,6 +1,13 @@
 name: flake8
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - master
 
 jobs:
   flake8-lint:
@@ -13,7 +20,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: "3.9"
-      - name: flake8
-        uses: xelaxela13/action-flake8@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: flake8 ./
