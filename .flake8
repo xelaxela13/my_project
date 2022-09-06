@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 79
+exclude =
+    migrations,
+    tmp*.py,
+    tmp*,
+    test*,
+    test*.py,
+    */management/commands*,
+    local.py,
+    _local.py,
+    config.py,
+    basic,
+    venv
